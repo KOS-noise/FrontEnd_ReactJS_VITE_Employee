@@ -12,6 +12,13 @@ export default defineConfig({
     server: {
         port: 3000,
         open: true,
+        // 개발 시 브라우저는 Vite(3000)만 보고, /api 는 Spring Boot(8080)로 전달 → CORS 우회
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8080',
+                changeOrigin: true,
+            },
+        },
     },
 
     build: {
