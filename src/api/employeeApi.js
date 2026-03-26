@@ -8,9 +8,6 @@
  * ─────────────────────────────────────────────────────────────
  */
 
-/** 개발: 비우면 상대경로 /api → Vite proxy. 직접 지정: .env 에 VITE_API_BASE_URL=http://localhost:8080 */
-const API_ROOT = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
-
 const checkResponse = async (response) => {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({
@@ -22,7 +19,7 @@ const checkResponse = async (response) => {
 };
 
 export class EmployeeApi {
-    #baseUrl = API_ROOT ? `${API_ROOT}/api/employees` : '/api/employees';
+    #baseUrl = 'http://localhost:8080/api/employees';
 
     // 전체 직원 목록 조회 — GET /api/employees
     async getAll() {
@@ -79,12 +76,7 @@ export class EmployeeApi {
     // 페이징 직원 목록 조회 — GET /api/employees/page
     // paging.md 6-1 참고: pageNo(0부터), pageSize, sortBy, sortDir
     async getPage({ pageNo = 0, pageSize = 5, sortBy = 'id', sortDir = 'asc' } = {}) {
-        const params = new URLSearchParams({
-            pageNo: String(pageNo),
-            pageSize: String(pageSize),
-            sortBy,
-            sortDir,
-        });
+        const params = new URLSearchParams({ pageNo, pageSize, sortBy, sortDir });
         const response = await fetch(`${this.#baseUrl}/page?${params}`);
         await checkResponse(response);
         return response.json();
